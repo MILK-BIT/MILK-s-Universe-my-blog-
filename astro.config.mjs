@@ -3,5 +3,6 @@ import react from '@astrojs/react';
 
 export default defineConfig({
   integrations: [react()],
-  site: 'https://your-domain.com',
+  site: 'https://MILK-BIT.github.io',
+  base:'/MILK-s-Universe-my-blog-'
 });
