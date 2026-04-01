@@ -1,0 +1,186 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import StarField from '../../components/StarField.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const photos = await getCollection('photography');
+  return photos.map(photo => ({
+    params: { slug: photo.slug },
+    props: { photo },
+  }));
+}
+
+const { photo } = Astro.props;
+const { Content } = await photo.render();
+
+const formattedDate = new Date(photo.data.date).toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const clusterColor = '#4ecdc4';
+---
+
+<Layout title={`${photo.data.title} - 摄影`} description={photo.data.title}>
+  <StarField />
+
+  <article class="photo-post">
+    <div class="container">
+      <a href="/photography" class="back-link">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        返回相册
+      </a>
+
+      <div class="photo-content">
+        <div class="photo-main">
+          <img src={photo.data.image} alt={photo.data.title} />
+        </div>
+
+        <div class="photo-info">
+          <h1>{photo.data.title}</h1>
+
+          <div class="photo-meta">
+            <div class="meta-item">
+              <span class="meta-label">日期</span>
+              <span class="meta-value">{formattedDate}</span>
+            </div>
+            {photo.data.location && (
+              <div class="meta-item">
+                <span class="meta-label">地点</span>
+                <span class="meta-value">{photo.data.location}</span>
+              </div>
+            )}
+            {photo.data.camera && (
+              <div class="meta-item">
+                <span class="meta-label">相机</span>
+                <span class="meta-value">{photo.data.camera}</span>
+              </div>
+            )}
+          </div>
+
+          <div class="photo-description">
+            <Content />
+          </div>
+
+          <div class="header-line" style={`--cluster-color: ${clusterColor}`}></div>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .photo-post {
+    padding: var(--spacing-2xl) 0;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: var(--cluster-color);
+    font-size: 0.9375rem;
+    margin-bottom: var(--spacing-lg);
+    transition: all var(--transition-fast);
+  }
+
+  .back-link:hover {
+    color: var(--color-text);
+    transform: translateX(-4px);
+  }
+
+  .back-link svg {
+    transition: transform var(--transition-fast);
+  }
+
+  .back-link:hover svg {
+    transform: translateX(-4px);
+  }
+
+  .photo-main {
+    margin-bottom: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  }
+
+  .photo-main img {
+    width: 100%;
+    height: auto;
+  }
+
+  .photo-info {
+    background: rgba(20, 20, 35, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+  }
+
+  .photo-info h1 {
+    margin-bottom: var(--spacing-md);
+    font-family: var(--font-serif);
+    color: var(--cluster-color);
+    text-shadow: 0 0 30px color-mix(in srgb, var(--cluster-color) 30%, transparent);
+  }
+
+  .photo-meta {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .meta-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+  }
+
+  .meta-value {
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .photo-description {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+  }
+
+  .header-line {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cluster-color), transparent);
+    margin-top: var(--spacing-lg);
+  }
+
+  @media (max-width: 768px) {
+    .photo-meta {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+
+    .photo-info {
+      padding: var(--spacing-lg);
+    }
+  }
+</style>

@@ -1,0 +1,194 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import StarField from '../../components/StarField.astro';
+import { getCollection } from 'astro:content';
+
+const others = await getCollection('others');
+
+// 按日期排序
+const sortedOthers = others.sort((a, b) =>
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const clusterColor = '#fbbf24';
+---
+
+<Layout title="其他 - 星辰博客" description="其他内容">
+  <StarField />
+
+  <div class="others-page">
+    <div class="container">
+      <header class="page-header">
+        <div class="header-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="3"/>
+            <circle cx="12" cy="12" r="8" stroke-dasharray="4 4"/>
+            <circle cx="12" cy="4" r="1.5" fill="currentColor"/>
+            <circle cx="20" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="12" cy="20" r="1.5" fill="currentColor"/>
+            <circle cx="4" cy="12" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <h1>其他</h1>
+        <p class="page-description">书单推荐、工具分享、生活随想</p>
+        <div class="header-line" style={`--cluster-color: ${clusterColor}`}></div>
+      </header>
+
+      <div class="others-list">
+        {sortedOthers.map((item, index) => (
+          <a href={`/others/${item.slug}`} class="other-card" style={`animation-delay: ${index * 0.1}s`}>
+            <div class="card-glow"></div>
+            <div class="other-meta">
+              <time>{new Date(item.data.date).toLocaleDateString('zh-CN')}</time>
+            </div>
+            <h3 class="other-title">{item.data.title}</h3>
+            {item.data.tags && item.data.tags.length > 0 && (
+              <div class="other-tags">
+                {item.data.tags.map(tag => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            )}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .others-page {
+    padding: var(--spacing-2xl) 0;
+    min-height: 60vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .header-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--spacing-md);
+    color: var(--cluster-color);
+  }
+
+  .header-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .page-header h1 {
+    margin-bottom: var(--spacing-sm);
+    color: var(--cluster-color);
+    text-shadow: 0 0 30px color-mix(in srgb, var(--cluster-color) 50%, transparent);
+  }
+
+  .page-description {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .header-line {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cluster-color), transparent);
+    margin: var(--spacing-lg) auto 0;
+  }
+
+  .others-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .other-card {
+    position: relative;
+    display: block;
+    background: rgba(20, 20, 35, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    transition: all var(--transition-normal);
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .card-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cluster-color), transparent);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+  }
+
+  .other-card:hover {
+    border-color: var(--cluster-color);
+    transform: translateX(8px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 30px color-mix(in srgb, var(--cluster-color) 15%, transparent);
+  }
+
+  .other-card:hover .card-glow {
+    opacity: 1;
+  }
+
+  .other-meta {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .other-meta time {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .other-title {
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text);
+    transition: color var(--transition-fast);
+  }
+
+  .other-card:hover .other-title {
+    color: var(--cluster-color);
+  }
+
+  .other-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(251, 191, 36, 0.1);
+    color: var(--cluster-color);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: 4px;
+    font-weight: 500;
+  }
+</style>

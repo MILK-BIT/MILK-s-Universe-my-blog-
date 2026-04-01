@@ -1,0 +1,141 @@
+---
+const navLinks = [
+  { href: '/', label: '首页' },
+  { href: '/notes', label: '文稿' },
+  { href: '/photography', label: '摄影' },
+  { href: '/research', label: '科研' },
+  { href: '/others', label: '其他' },
+];
+---
+
+<header class="navbar glass">
+  <div class="container navbar-content">
+    <a href="/" class="logo">
+      <span class="logo-icon">✦</span>
+      <span class="logo-text">StarBlog</span>
+    </a>
+
+    <nav class="nav-links">
+      {navLinks.map(link => (
+        <a href={link.href} class="nav-link">
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <button class="mobile-menu-btn" aria-label="菜单">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<style>
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .navbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--color-text);
+  }
+
+  .logo:hover {
+    color: var(--color-accent);
+  }
+
+  .logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--color-accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+  }
+
+  .logo-text {
+    background: linear-gradient(135deg, #fff 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  .nav-link {
+    font-weight: 500;
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    position: relative;
+    padding: 0.5rem 0;
+    transition: all var(--transition-fast);
+  }
+
+  .nav-link:hover {
+    color: var(--color-text);
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-accent), #a78bfa);
+    transition: width var(--transition-normal);
+    border-radius: 1px;
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  .mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none;
+    }
+
+    .mobile-menu-btn {
+      display: block;
+    }
+  }
+</style>
